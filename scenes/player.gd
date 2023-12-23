@@ -3,11 +3,8 @@ extends CharacterBody2D
 
 @export var SPEED = 200.0
 @onready var sprite_2d = $Sprite2D
+
 var facing_left = false
-
-# Get the gravity from the project settings to be synced with RigidBody nodes.
-var gravity = ProjectSettings.get_setting("physics/2d/default_gravity")
-
 
 func _physics_process(delta):
 	var direction_y = Input.get_axis("move_up", "move_down")
