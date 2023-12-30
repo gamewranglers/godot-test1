@@ -10,7 +10,6 @@ var facing_left = false
 
 
 func _ready():
-    # add to the 'enemies' group
     add_to_group("enemies")
 
 
