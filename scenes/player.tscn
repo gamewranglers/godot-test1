@@ -1,21 +1,35 @@
-[gd_scene load_steps=4 format=3 uid="uid://78vs58r8uvs2"]
+[gd_scene load_steps=5 format=3 uid="uid://78vs58r8uvs2"]
 
-[ext_resource type="Texture2D" uid="uid://dikjpbhp5bia5" path="res://tiles/tile_0087.png" id="1_bi6cp"]
 [ext_resource type="Script" path="res://scenes/player.gd" id="1_bxoqp"]
+[ext_resource type="Texture2D" uid="uid://dikjpbhp5bia5" path="res://tiles/dungeon/tile_0087.png" id="2_rohff"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_q8gyt"]
 size = Vector2(10, 11)
 
+[sub_resource type="CircleShape2D" id="CircleShape2D_ufdp2"]
+radius = 12.0104
+
 [node name="Player" type="CharacterBody2D"]
 position = Vector2(341, 169)
+platform_floor_layers = 4294901760
 script = ExtResource("1_bxoqp")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 texture_filter = 1
-texture = ExtResource("1_bi6cp")
+texture = ExtResource("2_rohff")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(0, 2.5)
 shape = SubResource("RectangleShape2D_q8gyt")
 
 [node name="Camera2D" type="Camera2D" parent="."]
+
+[node name="AttackRange" type="Area2D" parent="."]
+position = Vector2(0, 2)
+collision_layer = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="AttackRange"]
+shape = SubResource("CircleShape2D_ufdp2")
+
+[connection signal="body_entered" from="AttackRange" to="." method="_on_attack_range_body_entered"]
+[connection signal="body_exited" from="AttackRange" to="." method="_on_attack_range_body_exited"]
