@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://bpm8mfhifkm33"]
+[gd_scene load_steps=16 format=3 uid="uid://bpm8mfhifkm33"]
 
 [ext_resource type="Texture2D" uid="uid://by1m0jqibh1a6" path="res://tiles/dungeon/tile_0048.png" id="1_5iarv"]
 [ext_resource type="PackedScene" uid="uid://78vs58r8uvs2" path="res://scenes/player.tscn" id="1_34rbn"]
@@ -7,7 +7,10 @@
 [ext_resource type="PackedScene" uid="uid://by08s0oxjvqas" path="res://scenes/mob.tscn" id="2_kw3gy"]
 [ext_resource type="Texture2D" uid="uid://bliq8fuphy7a4" path="res://tilemaps/tilemap1.png" id="3_c0tva"]
 [ext_resource type="Texture2D" uid="uid://lvrdnh614yyv" path="res://tilemaps/tilemap3.png" id="4_orhag"]
-[ext_resource type="PackedScene" uid="uid://r33q5o4igj7m" path="res://scenes/axe.tscn" id="9_olyx0"]
+[ext_resource type="PackedScene" uid="uid://bcqxsiytj1ft6" path="res://scenes/axe.tscn" id="9_olyx0"]
+[ext_resource type="PackedScene" uid="uid://c5253rxvlqjqr" path="res://scenes/sword.tscn" id="10_j8uo3"]
+[ext_resource type="Script" path="res://scenes/axe.gd" id="10_klnbc"]
+[ext_resource type="Script" path="res://scenes/sword.gd" id="12_i7bin"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_mkhrv"]
 texture = ExtResource("2_2kji2")
@@ -1570,7 +1573,9 @@ position = Vector2(315, 335)
 [node name="Pickups" type="Node2D" parent="."]
 
 [node name="Axe" parent="Pickups" instance=ExtResource("9_olyx0")]
-position = Vector2(434, 294)
-collision_layer = 0
+position = Vector2(563, 456)
+script = ExtResource("10_klnbc")
 
-[connection signal="body_entered" from="Pickups/Axe" to="Player" method="_on_axe_body_entered"]
+[node name="Sword" parent="Pickups" instance=ExtResource("10_j8uo3")]
+position = Vector2(520, 438)
+script = ExtResource("12_i7bin")
