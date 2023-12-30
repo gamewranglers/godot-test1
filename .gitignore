@@ -2,3 +2,7 @@
 .godot/
 
 *.tmp
+
+# videos created for progress
+video_clips
+*.avi
