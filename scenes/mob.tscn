@@ -1,0 +1,20 @@
+[gd_scene load_steps=4 format=3 uid="uid://by08s0oxjvqas"]
+
+[ext_resource type="Script" path="res://scenes/mob.gd" id="1_qjwsk"]
+[ext_resource type="Texture2D" uid="uid://ddiqq5das1r4" path="res://tiles/dungeon/tile_0121.png" id="2_b5hcs"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_gk7dc"]
+size = Vector2(14, 14)
+
+[node name="Enemy" type="CharacterBody2D"]
+platform_floor_layers = 4294901760
+script = ExtResource("1_qjwsk")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture_filter = 1
+texture = ExtResource("2_b5hcs")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, 1)
+shape = SubResource("RectangleShape2D_gk7dc")
+debug_color = Color(1, 0, 0.12549, 0.419608)
