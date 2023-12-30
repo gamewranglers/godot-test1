@@ -7,7 +7,9 @@
 size = Vector2(14, 14)
 
 [node name="Enemy" type="CharacterBody2D"]
-platform_floor_layers = 4294901760
+collision_layer = 2
+collision_mask = 3
+platform_floor_layers = 0
 script = ExtResource("1_qjwsk")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
