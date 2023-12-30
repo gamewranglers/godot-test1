@@ -1,0 +1,9 @@
+[gd_scene load_steps=3 format=3 uid="uid://c5253rxvlqjqr"]
+
+[ext_resource type="Texture2D" uid="uid://b3xfo7084kj2x" path="res://tiles/dungeon/tile_0104.png" id="1_0cl7b"]
+[ext_resource type="PackedScene" uid="uid://bq7g8e6hkidit" path="res://scenes/weapon.tscn" id="1_747ry"]
+
+[node name="Weapon" instance=ExtResource("1_747ry")]
+
+[node name="Sprite2D" parent="." index="0"]
+texture = ExtResource("1_0cl7b")
