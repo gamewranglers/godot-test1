@@ -2,10 +2,17 @@ extends Area2D
 
 
 var weapon_type = "UNK"
+var facing_left = false
 
 # base properties
 var damage = 10
 var weapon_range = 50
+
+# attack transform properties / movement per frame
+var is_attacking = false
+var attack_speed = 50
+var attack_progress = 0
+var attack_progress_max = 10
 
 
 signal item_body_entered(item_name, body)
@@ -20,6 +27,7 @@ func _ready():
     # check if player is loaded and connect signals dynamically
     var player = get_node("/root/Game/Player")
     if player:
+        # this would only be null if a weapon spawned before the player node, which shouldn't happen
         connect("item_body_entered", player._on_item_body_entered)
         connect("item_body_exited", player._on_item_body_exited)
 
@@ -30,3 +38,8 @@ func _on_body_entered(body):
 
 func _on_body_exited(body):
     emit_signal("item_body_exited", name, body)
+
+
+func attack():
+    is_attacking = true
+    attack_progress = 0
