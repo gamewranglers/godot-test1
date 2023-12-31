@@ -4,7 +4,8 @@ Demo video [link](https://www.youtube.com/watch?v=V1uBrWeMzxg)
 ### Added
 - Enemy movement and Player tracking
 - Town & Battle tiles, along with a grass texture rectangle
-- Axe item pickup 🪓
+- Base Weapon class with Axe and Sword instances with weapon pickup/drop/swap
+- Axe attack swing animation 🪓 based off of player pivot/anchor point
 - Player attack range signal
 
 ### Removed
