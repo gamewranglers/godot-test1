@@ -1,5 +1,12 @@
 extends Node
 
+var game_version = "0.0.1"
+
+
+func _ready():
+    %VersionLabel.text = "version %s" % game_version
+
+
 
 func spawn_mob():
     var new_mob = preload("res://scenes/mob.tscn").instantiate()

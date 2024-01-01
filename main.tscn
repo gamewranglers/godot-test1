@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=3 uid="uid://bpm8mfhifkm33"]
+[gd_scene load_steps=18 format=3 uid="uid://bpm8mfhifkm33"]
 
 [ext_resource type="Texture2D" uid="uid://by1m0jqibh1a6" path="res://tiles/dungeon/tile_0048.png" id="1_5iarv"]
 [ext_resource type="PackedScene" uid="uid://78vs58r8uvs2" path="res://scenes/player.tscn" id="1_34rbn"]
@@ -1538,6 +1538,12 @@ _data = {
 }
 point_count = 8
 
+[sub_resource type="LabelSettings" id="LabelSettings_seg8b"]
+font_size = 8
+outline_size = 1
+outline_color = Color(0, 0, 0, 1)
+shadow_color = Color(0, 0, 0, 0.443137)
+
 [node name="Game" type="Node"]
 script = ExtResource("1_bhadk")
 
@@ -1589,5 +1595,24 @@ curve = SubResource("Curve2D_2f2ed")
 unique_name_in_owner = true
 position = Vector2(164, 83)
 rotation = -0.0371451
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="VersionLabel" type="Label" parent="CanvasLayer"]
+unique_name_in_owner = true
+texture_filter = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -64.0
+offset_top = -22.0
+offset_right = -0.535034
+offset_bottom = 1.0
+grow_horizontal = 0
+grow_vertical = 0
+text = "TEST"
+label_settings = SubResource("LabelSettings_seg8b")
 
 [connection signal="timeout" from="EnemySpawner/EnemySpawnTimer" to="." method="_on_enemy_spawn_timer_timeout"]
