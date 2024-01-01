@@ -1,4 +1,4 @@
-[gd_scene load_steps=5 format=3 uid="uid://78vs58r8uvs2"]
+[gd_scene load_steps=7 format=3 uid="uid://78vs58r8uvs2"]
 
 [ext_resource type="Script" path="res://scenes/player.gd" id="1_bxoqp"]
 [ext_resource type="Texture2D" uid="uid://dikjpbhp5bia5" path="res://tiles/dungeon/tile_0087.png" id="2_rohff"]
@@ -9,11 +9,23 @@ size = Vector2(10, 11)
 [sub_resource type="CircleShape2D" id="CircleShape2D_ufdp2"]
 radius = 12.0104
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_eioub"]
+size = Vector2(16, 15)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_mfeoa"]
+bg_color = Color(0, 0.709804, 0.470588, 1)
+corner_radius_top_left = 1
+corner_radius_top_right = 1
+corner_radius_bottom_right = 1
+corner_radius_bottom_left = 1
+anti_aliasing = false
+
 [node name="Player" type="CharacterBody2D"]
 position = Vector2(341, 169)
 collision_mask = 19
 platform_floor_layers = 0
 script = ExtResource("1_bxoqp")
+metadata/_edit_horizontal_guides_ = [162.0, 159.0]
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 texture_filter = 1
@@ -23,18 +35,42 @@ texture = ExtResource("2_rohff")
 position = Vector2(0, 2.5)
 shape = SubResource("RectangleShape2D_q8gyt")
 
-[node name="Camera2D" type="Camera2D" parent="."]
-
 [node name="AttackRange" type="Area2D" parent="."]
-position = Vector2(0, 2)
-collision_layer = 2
+unique_name_in_owner = true
+position = Vector2(0, 1)
+collision_layer = 0
 collision_mask = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="AttackRange"]
 shape = SubResource("CircleShape2D_ufdp2")
 
+[node name="Hitbox" type="Area2D" parent="."]
+unique_name_in_owner = true
+collision_layer = 0
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hitbox"]
+position = Vector2(0, 0.5)
+shape = SubResource("RectangleShape2D_eioub")
+debug_color = Color(0.498039, 0.901961, 1, 0.419608)
+
 [node name="WeaponPivotPoint" type="Marker2D" parent="."]
+unique_name_in_owner = true
 position = Vector2(0, 4)
+
+[node name="Camera2D" type="Camera2D" parent="."]
+
+[node name="HealthBar" type="ProgressBar" parent="."]
+unique_name_in_owner = true
+texture_filter = 1
+offset_left = -10.0
+offset_top = -12.0
+offset_right = 30.0
+offset_bottom = -8.0
+scale = Vector2(0.5, 0.5)
+theme_override_styles/fill = SubResource("StyleBoxFlat_mfeoa")
+value = 1.44
+show_percentage = false
 
 [connection signal="body_entered" from="AttackRange" to="." method="_on_attack_range_body_entered"]
 [connection signal="body_exited" from="AttackRange" to="." method="_on_attack_range_body_exited"]
