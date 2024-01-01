@@ -14,6 +14,8 @@ Tiles used:
 - https://www.kenney.nl/assets/tiny-battle
 
 ## Progress
+### 2024-01-01
+![image](https://github.com/gamewranglers/wranglersurvivors/assets/7707189/bb372eac-4445-4fb1-bffd-218d875d5949)
 
 ### 2023-12-30
 ![image](https://github.com/gamewranglers/wranglersurvivors/assets/7707189/91573a00-5c31-4ccf-bb0d-d235aa76adf0)
