@@ -11,7 +11,7 @@ func _process(delta):
         else:
             weapon_pivot.rotation_degrees += rotation_step * 10
         
-        attack_progress += abs(rotation_step)        
+        attack_progress += abs(rotation_step)
         if attack_progress >= attack_progress_max:
             is_attacking = false
             # reset position
