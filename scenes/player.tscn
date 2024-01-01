@@ -73,5 +73,10 @@ theme_override_styles/fill = SubResource("StyleBoxFlat_mfeoa")
 value = 1.44
 show_percentage = false
 
+[node name="HitFlashTimer" type="Timer" parent="."]
+unique_name_in_owner = true
+wait_time = 0.1
+
 [connection signal="body_entered" from="AttackRange" to="." method="_on_attack_range_body_entered"]
 [connection signal="body_exited" from="AttackRange" to="." method="_on_attack_range_body_exited"]
+[connection signal="timeout" from="HitFlashTimer" to="." method="_on_hit_flash_timer_timeout"]

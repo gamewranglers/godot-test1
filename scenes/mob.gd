@@ -77,14 +77,19 @@ func take_knockback(amount: int):
 
 func take_damage(amount: int):
     health_points -= amount
-    # TODO: add some kind of hit indicator/animation
     #print("%s took %s point(s) of damage (%s/%s)" % [self, amount, health_points, max_health_points])
+    
+    mob_sprite.modulate = Color.RED
+    %HitFlashTimer.start()
     
     if health_points <= 0:
         #print(self, " died! ☠️")
         queue_free()
         # TODO: add some death indicator/animation
         return kill_experience
-        
-    return 0
     
+    return 0
+
+
+func _on_hit_flash_timer_timeout():
+    mob_sprite.modulate = Color.WHITE

@@ -241,6 +241,9 @@ func handle_enemy_damage():
             enemy.last_attack_time = Time.get_ticks_msec()
 
 func take_damage(damage_amount: int):
+    player_sprite.modulate = Color.RED
+    %HitFlashTimer.start()
+    
     if health_points <= 0:
         print("player died! ☠️")
         # queue_free()
@@ -264,3 +267,7 @@ func _on_hold_attack_toggle_toggled(toggled_on):
 
 func _on_attack_button_pressed():
     attack()
+
+
+func _on_hit_flash_timer_timeout():
+    player_sprite.modulate = Color.WHITE
