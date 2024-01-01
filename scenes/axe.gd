@@ -1,6 +1,15 @@
 extends "res://scenes/weapon.gd"
 
 
+func _post_ready():
+    damage = 5
+    knockback_amount = 5
+
+    attack_speed = 150
+    attack_progress = 0
+    attack_progress_max = 50
+
+
 func _process(delta):
     if is_attacking:
         var rotation_step = attack_speed * delta 

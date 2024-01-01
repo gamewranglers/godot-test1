@@ -4,15 +4,16 @@ extends Area2D
 var weapon_type = "UNK"
 var facing_left = false
 
+var is_attacking = false
+
 # base properties
-var damage = 10
-var weapon_range = 50
+var damage = 1
+var knockback_amount = 0
 
 # attack transform properties / movement per frame
-var is_attacking = false
-var attack_speed = 50
+var attack_speed = 150
 var attack_progress = 0
-var attack_progress_max = 10
+var attack_progress_max = 50
 
 
 signal item_body_entered(item_name, body)
@@ -30,7 +31,14 @@ func _ready():
         # this would only be null if a weapon spawned before the player node, which shouldn't happen
         connect("item_body_entered", player._on_item_body_entered)
         connect("item_body_exited", player._on_item_body_exited)
+        
+    # called by subscenes to update properties and handle other behavior
+    # without overwriting (and breaking) `_ready()`
+    _post_ready()
 
+func _post_ready():
+    # overwrite this in subscenes
+    pass
 
 # extend body_entered/_exited to provide item name
 func _on_body_entered(body):
@@ -48,3 +56,7 @@ func attack():
 func hit():
     # TODO: add some randomness and hit/miss stats
     return damage
+
+
+func knockback():
+    return knockback_amount

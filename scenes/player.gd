@@ -1,6 +1,12 @@
 extends CharacterBody2D
 
+@export var AUTO_ATTACK = false
+@export var HOLD_TO_ATTACK = true
+
 @onready var player_sprite = $Sprite2D
+# big health bar in the UI
+@onready var player_health_bar = %PlayerHealthBar
+@onready var player_health_values = %PlayerHealthValues
 
 @export var PLAYER_SPEED = 200.0
 
@@ -8,6 +14,10 @@ var health_points = 100
 var max_health_points = 100
 
 var experience = 0
+
+var attacking = false
+var last_attack_time = 0
+var attack_cooldown_sec = 0.35
 
 var held_weapon = null
 var recently_dropped_weapon = false
@@ -20,17 +30,36 @@ var facing_left = false
 
 
 func _physics_process(delta: float):
-    %HealthBar.value = health_points
-    %HealthBar.max_value = max_health_points
+    update_health_bars()
     
     handle_movement(delta)
     
     adjust_held_weapon()
     adjust_attack_range()
 
-    handle_attack_input()
+    if AUTO_ATTACK:
+        attack()
+
     handle_enemy_damage()
 
+
+func update_health_bars():
+    # over the player sprite
+    %HealthBar.value = health_points
+    %HealthBar.max_value = max_health_points
+    if health_points < max_health_points:
+        # display the health bar over the player if any damage was taken
+        %HealthBar.visible = true
+    else:
+        %HealthBar.visible = false
+
+    # in the UI
+    var ui_health_bar = get_node("/root/Game/UI/PlayerHealthBar")
+    ui_health_bar.value = health_points
+    ui_health_bar.max_value = max_health_points
+    var ui_health_bar_values = get_node("/root/Game/UI/PlayerHealthValues")
+    ui_health_bar_values.text = "%s/%s" % [health_points, max_health_points]
+    
             
 func handle_movement(delta):
     # check for vertical movement
@@ -59,25 +88,42 @@ func handle_movement(delta):
         held_weapon.facing_left = facing_left
     
     
+func _unhandled_input(event):
+    if not AUTO_ATTACK and not event.is_echo():
+        handle_attack_input()
+    
 
 func handle_attack_input():
-    if Input.is_action_just_pressed("primary_attack"):
-        if held_weapon != null:
-            # reset any current attack animation before re-triggering
-            %WeaponPivotPoint.rotation_degrees = 0
-            held_weapon.attack()
-            
-            var enemies_in_range = %AttackRange.get_overlapping_bodies()
-            # TODO: determine whether player is attacking one enemy or multiple
-            for enemy in enemies_in_range:
-                var damage_amount = held_weapon.hit()
-                var experience_gained = enemy.take_damage(damage_amount)
-                experience += experience_gained
-                
-            print("player xp: %s" % experience)
-        else:
-            print("no weapon to attack with, and we haven't implemented punching yet!")
-    
+    if HOLD_TO_ATTACK:
+        # can be held down instead of requiring individual clicks/presses
+        attacking = Input.is_action_pressed("primary_attack")
+    else:
+        attacking = Input.is_action_just_pressed("primary_attack")
+    if attacking:
+        attack()
+
+
+func attack():
+    var attack_off_cooldown = Time.get_ticks_msec() - last_attack_time > attack_cooldown_sec * 1000
+    if not attack_off_cooldown:
+        return
+        
+    if held_weapon != null:
+        # reset any current attack animation before re-triggering
+        %WeaponPivotPoint.rotation_degrees = 0
+        held_weapon.attack()
+        
+        var enemies_in_range = %AttackRange.get_overlapping_bodies()
+        # TODO: determine whether player is attacking one enemy or multiple
+        for enemy in enemies_in_range:
+            enemy.take_knockback(held_weapon.knockback())
+            var experience_gained = enemy.take_damage(held_weapon.hit())
+            experience += experience_gained
+            if experience_gained:
+                print("player xp: %s" % experience)
+    else:
+        print("no weapon to attack with, and we haven't implemented punching yet!")
+    last_attack_time = Time.get_ticks_msec()
     
 func adjust_held_weapon():
     if held_weapon == null:
@@ -159,16 +205,6 @@ func handle_potion_pickup():
     pass
 
 
-# PLAYER->ENEMY 
-func _on_attack_range_body_entered(body):
-    if body.is_in_group("enemies"):
-        print("%s in attacking range! 🪓" % body)
-
-func _on_attack_range_body_exited(body):
-    if body.is_in_group("enemies"):
-        print("%s no longer in attack range" % body)
-
-
 # PLAYER->ITEM
 func _on_item_body_entered(item_name: String, body):
     if body != self:
@@ -194,23 +230,37 @@ func _on_item_body_exited(item_name: String, body):
         recently_dropped_weapon = false
 
 # ENEMY->PLAYER
-func _on_hitbox_body_entered(body):
-    if body.is_in_group("enemies"):
-        print("%s hit player!" % body)
-    
-
 func handle_enemy_damage():
     var overlapping_enemies = %Hitbox.get_overlapping_bodies()
     for enemy in overlapping_enemies:
         var damage_amount = enemy.hit()
-        take_damage(damage_amount)
-
+        # check attack cooldown so player doesn't take rapid-fire damage
+        var attack_off_cooldown = Time.get_ticks_msec() - enemy.last_attack_time > enemy.attack_cooldown_sec * 1000
+        if attack_off_cooldown:
+            take_damage(damage_amount)
+            enemy.last_attack_time = Time.get_ticks_msec()
 
 func take_damage(damage_amount: int):
-    health_points -= damage_amount
-    print("%s took %s point(s) of damage (%s/%s)" % [self, damage_amount, health_points, max_health_points])
-    
     if health_points <= 0:
         print("player died! ☠️")
         # queue_free()
         # TODO: transition to some "game over" state
+        return
+
+    health_points -= damage_amount
+    print("%s took %s point(s) of damage (%s/%s)" % [self, damage_amount, health_points, max_health_points])
+
+
+func _on_auto_attack_toggle_toggled(toggled_on):
+    if AUTO_ATTACK != toggled_on:
+        print("turned auto_attack to %s" % toggled_on)
+        AUTO_ATTACK = toggled_on
+        
+func _on_hold_attack_toggle_toggled(toggled_on):
+    if HOLD_TO_ATTACK != toggled_on:
+        print("turned hold_to_attack to %s" % toggled_on)
+        HOLD_TO_ATTACK = toggled_on
+
+
+func _on_attack_button_pressed():
+    attack()
