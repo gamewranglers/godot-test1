@@ -75,9 +75,9 @@ jobs:
         run: |
           mkdir -v -p ~/.local/share/godot/templates
           mv /root/.local/share/godot/templates/${GODOT_VERSION}.stable ~/.local/share/godot/templates/${GODOT_VERSION}.stable
-      - name: Echo current directory
+      - name: Echo current directory & contents
         run: |
-          pwd
+          pwd && ls
       - name: Web Build
         run: |
           mkdir -v -p build/web
