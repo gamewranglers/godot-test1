@@ -25,3 +25,4 @@ func _on_enemy_spawn_timer_timeout():
 
 func _on_auto_attack_toggle_toggled(toggled_on):
     %AttackButton.disabled = toggled_on
+    %HoldAttackToggle.disabled = toggled_on
