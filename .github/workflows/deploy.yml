@@ -8,7 +8,7 @@ env:
   ITCHIO_GAME: wranglersurvivors
   GODOT_VERSION: 4.2.1
   EXPORT_NAME: wranglersurvivors
-  PROJECT_PATH: wranglersurvivors
+  # PROJECT_PATH: wranglersurvivors
   
 jobs:
   # export-windows:
@@ -81,8 +81,7 @@ jobs:
       - name: Web Build
         run: |
           mkdir -v -p build/web
-          cd $PROJECT_PATH
-          godot --headless --verbose --export-release "Web" ../build/web/index.html
+          godot --headless --verbose --export-release "Web" ./build/web/index.html
       - name: Upload Artifact
         uses: actions/upload-artifact@v1
         with:
