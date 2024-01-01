@@ -2,7 +2,10 @@ Tinkering with 2D top-down mechanics. Initial direction for learning purposes is
 
 ---
 
-## [Changelog](https://github.com/gamewranglers/godot-test1/blob/main/CHANGELOG.md)
+## 👾 [Try on itch.io](https://shouples.itch.io/wranglersurvivors)
+## 📝 [Changelog](https://github.com/gamewranglers/godot-test1/blob/main/CHANGELOG.md)
+## 📺 [Dev/demo videos](https://www.youtube.com/playlist?list=PLv-lV1XeDUcJvGr8qVGhbGcpE_t7peTbb)
+
 
 ## Assets
 Tiles used:
