@@ -43,3 +43,8 @@ func _on_body_exited(body):
 func attack():
     is_attacking = true
     attack_progress = 0
+
+
+func hit():
+    # TODO: add some randomness and hit/miss stats
+    return damage
