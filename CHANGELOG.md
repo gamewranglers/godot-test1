@@ -1,3 +1,11 @@
+## 2023-12-31
+### Added
+- Hitboxes for Player and Enemy
+- Player and Enemy health bars, showing decreasing health points when attack is triggered and hitboxes are entered
+
+### Changed
+- Enemies now spawn from path instead of being loaded from the beginning
+
 
 ## 2023-12-30
 Demo video [link](https://www.youtube.com/watch?v=V1uBrWeMzxg)
