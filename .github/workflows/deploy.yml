@@ -1,0 +1,33 @@
+name: Deploy
+
+on:
+  workflow_dispatch:
+
+env:
+  ITCH_USERNAME: shouples
+  ITCH_GAME_ID: wranglersurvivors
+jobs:
+  deploy:
+    strategy:
+      fail-fast: true
+      matrix:
+        channel:
+          - windows
+          - webgl
+    runs-on: ubuntu-latest
+    name: Deploy - Itch.io ${{ matrix.template }}
+    steps:
+      - name: Download
+        uses: actions/download-artifact@v2.0.8
+        with:
+          name: ${{ matrix.channel }}
+          path: build/${{ matrix.channel }}
+      - name: Publish
+        uses: KikimoraGames/itch-publish@v0.0.3
+        with:
+          butlerApiKey: ${{secrets.BUTLER_API_KEY}}
+          gameData: ./build/${{ matrix.template }}
+          itchUsername: ${{env.ITCH_USERNAME}}
+          itchGameId: ${{ env.ITCH_GAME_ID }}
+          buildChannel: ${{ matrix.channel }}
+          buildNumber: ${{ needs.version.outputs.version_hash }}
