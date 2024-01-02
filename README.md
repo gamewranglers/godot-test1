@@ -15,7 +15,7 @@ Tiles used:
 
 ## Progress
 ### 2024-01-01
-![image](https://github.com/gamewranglers/wranglersurvivors/assets/7707189/bb372eac-4445-4fb1-bffd-218d875d5949)
+![image](https://github.com/gamewranglers/wranglersurvivors/assets/7707189/08de6746-1c57-41fa-951c-14f0cd892c0a)
 
 ### 2023-12-30
 ![image](https://github.com/gamewranglers/wranglersurvivors/assets/7707189/91573a00-5c31-4ccf-bb0d-d235aa76adf0)
