@@ -8,6 +8,7 @@ var health_points = 10
 var max_health_points = 10
 
 var damage = 5
+var status_text_scene = preload("res://scenes/status_text.tscn")
 
 var last_attack_time = 0
 var attack_cooldown_sec = 0.5
@@ -80,7 +81,12 @@ func take_damage(amount: int):
     #print("%s took %s point(s) of damage (%s/%s)" % [self, amount, health_points, max_health_points])
     
     mob_sprite.modulate = Color.RED
-    %HitFlashTimer.start()
+    %HurtFlashTimer.start()
+    
+    # display damage numbers
+    var popup = status_text_scene.instantiate()
+    get_parent().add_child(popup)
+    popup.start(str(amount), global_position)
     
     if health_points <= 0:
         #print(self, " died! ☠️")

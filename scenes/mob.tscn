@@ -45,11 +45,11 @@ position = Vector2(0, 1)
 shape = SubResource("CircleShape2D_lfoh4")
 debug_color = Color(1, 0, 0.12549, 0.419608)
 
-[node name="Hitbox" type="Area2D" parent="."]
+[node name="Hurtbox" type="Area2D" parent="."]
 visible = false
 collision_layer = 0
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Hitbox"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hurtbox"]
 position = Vector2(0, 0.5)
 shape = SubResource("RectangleShape2D_pkvb2")
 debug_color = Color(1, 0, 0.12549, 0.419608)
@@ -66,8 +66,7 @@ theme_override_styles/fill = SubResource("StyleBoxFlat_x20rk")
 value = 1.44
 show_percentage = false
 
-[node name="HitFlashTimer" type="Timer" parent="."]
+[node name="HurtFlashTimer" type="Timer" parent="."]
 unique_name_in_owner = true
-wait_time = 0.1
 
-[connection signal="timeout" from="HitFlashTimer" to="." method="_on_hit_flash_timer_timeout"]
+[connection signal="timeout" from="HurtFlashTimer" to="." method="_on_hit_flash_timer_timeout"]

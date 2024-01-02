@@ -1,7 +1,18 @@
+## 2024-01-01
+### Added
+- Enemy knockback during player attacks
+- Enemy and player hurt flashes
+- Floating damage numbers and "miss" text
+- Basic UI elements:
+  - toggles for auto-attack and hold-to-attack
+  - player healthbar with values
+  - Attack button?
+
+
 ## 2023-12-31
 ### Added
-- Hitboxes for Player and Enemy
-- Player and Enemy health bars, showing decreasing health points when attack is triggered and hitboxes are entered
+- Hurtboxes for Player and Enemy
+- Player and Enemy health bars, showing decreasing health points when attack is triggered and hurtboxes are entered
 
 ### Changed
 - Enemies now spawn from path instead of being loaded from the beginning

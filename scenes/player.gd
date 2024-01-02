@@ -1,32 +1,43 @@
 extends CharacterBody2D
 
+# settings
 @export var AUTO_ATTACK = false
 @export var HOLD_TO_ATTACK = true
 
+# player basics
 @onready var player_sprite = $Sprite2D
-# big health bar in the UI
-@onready var player_health_bar = %PlayerHealthBar
-@onready var player_health_values = %PlayerHealthValues
 
-@export var PLAYER_SPEED = 200.0
+var level = 1
+var experience = 0
+var experience_to_next_level = 100
 
+# player stats
 var health_points = 100
 var max_health_points = 100
 
-var experience = 0
+var strength = 5
+var dexterity = 5
 
+var armor = 1
+
+var movement_speed = 200.0
+
+# primary attack state + cooldown
 var attacking = false
 var last_attack_time = 0
 var attack_cooldown_sec = 0.35
 
+# pickup/drop weapon info
 var held_weapon = null
 var recently_dropped_weapon = false
 
+# general positioning
 var facing_left = false
-
 @export var EQUIPMENT_OFFSET_X = 8
 @export var EQUIPMENT_OFFSET_Y = -5
 @export var EQUIPMENT_ROTATION = 15
+
+var status_text_scene = preload("res://scenes/status_text.tscn")
 
 
 func _physics_process(delta: float):
@@ -65,18 +76,18 @@ func handle_movement(delta):
     # check for vertical movement
     var direction_y = Input.get_axis("move_up", "move_down")
     if direction_y:
-        velocity.y = direction_y * PLAYER_SPEED
+        velocity.y = direction_y * movement_speed
     else:
-        velocity.y = move_toward(velocity.y, 0, PLAYER_SPEED)
+        velocity.y = move_toward(velocity.y, 0, movement_speed)
         
     # check for horizontal movement
     var direction_x = Input.get_axis("move_left", "move_right")
     if direction_x:
-        velocity.x = direction_x * PLAYER_SPEED
+        velocity.x = direction_x * movement_speed
         # toggle facing right/left based on last movement direction
         facing_left = velocity.x < 0
     else:
-        velocity.x = move_toward(velocity.x, 0, PLAYER_SPEED)
+        velocity.x = move_toward(velocity.x, 0, movement_speed)
 
     move_and_slide()
     
@@ -117,13 +128,48 @@ func attack():
         # TODO: determine whether player is attacking one enemy or multiple
         for enemy in enemies_in_range:
             enemy.take_knockback(held_weapon.knockback())
-            var experience_gained = enemy.take_damage(held_weapon.hit())
-            experience += experience_gained
-            if experience_gained:
-                print("player xp: %s" % experience)
+            var hit_damage = calculate_hit_damage(held_weapon.damage)
+            if hit_damage:
+                var experience_gained = enemy.take_damage(hit_damage)
+                add_experience(experience_gained)
     else:
         print("no weapon to attack with, and we haven't implemented punching yet!")
     last_attack_time = Time.get_ticks_msec()
+
+
+func calculate_hit_damage(weapon_damage):
+    # TODO: make this better if dexterity is going to increase on level_up
+    var miss_chance = (100.0 - dexterity) / 100.0
+    var chance_to_hit = randf()
+    print("miss_chance: %s, chance_to_hit: %s" % [miss_chance, chance_to_hit])
+    if miss_chance < chance_to_hit:
+        show_damage_text("Miss")
+        return 0
+        
+    var strength_adjustment = 1 + (strength / 100)
+    return weapon_damage * strength_adjustment
+
+
+func show_damage_text(msg: String, color: Color = Color.WHITE):
+    var popup = status_text_scene.instantiate()
+    get_parent().add_child(popup)
+    popup.start(msg, global_position, color)
+    
+
+func add_experience(xp: int):
+    if xp <= 0:
+        return
+    
+    experience += xp
+    if experience >= experience_to_next_level:
+        level_up()
+        
+        
+func level_up():
+    level += 1
+    experience = 0
+    # TODO: increase stats and increase experience_to_next_level
+    
     
 func adjust_held_weapon():
     if held_weapon == null:
@@ -137,7 +183,7 @@ func adjust_held_weapon():
 func adjust_attack_range():
     if held_weapon != null:
         # double size of attack range
-        %AttackRange.scale = Vector2(2.0, 2.0)
+        %AttackRange.scale = Vector2(held_weapon.attack_range, held_weapon.attack_range)
     else:
         # reset the attack range size
         %AttackRange.scale = Vector2(1.0, 1.0)
@@ -231,7 +277,7 @@ func _on_item_body_exited(item_name: String, body):
 
 # ENEMY->PLAYER
 func handle_enemy_damage():
-    var overlapping_enemies = %Hitbox.get_overlapping_bodies()
+    var overlapping_enemies = %Hurtbox.get_overlapping_bodies()
     for enemy in overlapping_enemies:
         var damage_amount = enemy.hit()
         # check attack cooldown so player doesn't take rapid-fire damage
@@ -242,7 +288,9 @@ func handle_enemy_damage():
 
 func take_damage(damage_amount: int):
     player_sprite.modulate = Color.RED
-    %HitFlashTimer.start()
+    %HurtFlashTimer.start()
+    
+    show_damage_text(str(damage_amount), Color.RED)
     
     if health_points <= 0:
         print("player died! ☠️")
@@ -251,14 +299,15 @@ func take_damage(damage_amount: int):
         return
 
     health_points -= damage_amount
-    print("%s took %s point(s) of damage (%s/%s)" % [self, damage_amount, health_points, max_health_points])
+    #print("%s took %s point(s) of damage (%s/%s)" % [self, damage_amount, health_points, max_health_points])
 
 
+# EFFECTS FROM UI
 func _on_auto_attack_toggle_toggled(toggled_on):
     if AUTO_ATTACK != toggled_on:
         print("turned auto_attack to %s" % toggled_on)
         AUTO_ATTACK = toggled_on
-        
+
 func _on_hold_attack_toggle_toggled(toggled_on):
     if HOLD_TO_ATTACK != toggled_on:
         print("turned hold_to_attack to %s" % toggled_on)
