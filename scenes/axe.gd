@@ -4,10 +4,16 @@ extends "res://scenes/weapon.gd"
 func _post_ready():
     damage = 5
     knockback_amount = 5
-
+    attack_range = 2
+    
     attack_speed = 150
     attack_progress = 0
     attack_progress_max = 50
+    
+    
+func attack():
+    is_attacking = true
+    attack_progress = 0
 
 
 func _process(delta):

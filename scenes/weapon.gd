@@ -9,6 +9,7 @@ var is_attacking = false
 # base properties
 var damage = 1
 var knockback_amount = 0
+var attack_range = 1
 
 # attack transform properties / movement per frame
 var attack_speed = 150
@@ -49,8 +50,8 @@ func _on_body_exited(body):
 
 
 func attack():
-    is_attacking = true
-    attack_progress = 0
+    # overwrite this in subscenes
+    pass
 
 
 func hit():
