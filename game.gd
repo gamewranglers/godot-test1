@@ -23,6 +23,3 @@ func _on_enemy_spawn_timer_timeout():
     for i in range(spawn_rate):
         spawn_mob()
 
-
-func _on_auto_attack_toggle_toggled(toggled_on):
-    %HoldAttackToggle.disabled = toggled_on

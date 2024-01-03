@@ -1619,19 +1619,6 @@ grow_vertical = 0
 theme_override_font_sizes/font_size = 10
 text = "auto-attack"
 
-[node name="HoldAttackToggle" type="CheckButton" parent="UI"]
-unique_name_in_owner = true
-texture_filter = 1
-anchors_preset = 2
-anchor_top = 1.0
-anchor_bottom = 1.0
-offset_top = -45.0
-offset_right = 115.0
-offset_bottom = -21.0
-grow_vertical = 0
-theme_override_font_sizes/font_size = 10
-text = "hold to attack"
-
 [node name="PlayerLevelLabel" type="Label" parent="UI"]
 texture_filter = 1
 anchors_preset = 7
@@ -1707,5 +1694,4 @@ rotation = -0.0371451
 
 [connection signal="toggled" from="UI/AutoAttackToggle" to="." method="_on_auto_attack_toggle_toggled"]
 [connection signal="toggled" from="UI/AutoAttackToggle" to="Player" method="_on_auto_attack_toggle_toggled"]
-[connection signal="toggled" from="UI/HoldAttackToggle" to="Player" method="_on_hold_attack_toggle_toggled"]
 [connection signal="timeout" from="EnemySpawner/EnemySpawnTimer" to="." method="_on_enemy_spawn_timer_timeout"]

@@ -62,7 +62,6 @@ position = Vector2(0, 4)
 
 [node name="HealthBar" type="ProgressBar" parent="."]
 unique_name_in_owner = true
-visible = false
 texture_filter = 1
 offset_left = -10.0
 offset_top = -12.0

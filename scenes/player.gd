@@ -2,7 +2,6 @@ extends CharacterBody2D
 
 # settings
 @export var AUTO_ATTACK = false
-@export var HOLD_TO_ATTACK = true
 
 # player basics
 @onready var player_sprite = $Sprite2D
@@ -44,12 +43,7 @@ var facing_left = false
 var status_text_scene = preload("res://scenes/status_text.tscn")
 
 
-func _process(_delta: float):
-    if AUTO_ATTACK:
-        attack()
-
-
-func _physics_process(delta: float):
+func _physics_process(delta: float):    
     update_health_bars()
     
     if is_dead:
@@ -61,6 +55,10 @@ func _physics_process(delta: float):
     adjust_held_weapon()
     adjust_attack_range()
 
+    if AUTO_ATTACK:
+        attack()
+    else:
+        handle_attack_input()
     handle_enemy_damage()
 
 
@@ -68,7 +66,7 @@ func update_health_bars():
     # over the player sprite
     %HealthBar.value = health_points
     %HealthBar.max_value = max_health_points
-    if health_points < max_health_points:
+    if health_points < max_health_points and not is_dead:
         # display the health bar over the player if any damage was taken
         %HealthBar.visible = true
     else:
@@ -108,18 +106,13 @@ func handle_movement(delta):
     if held_weapon:
         held_weapon.facing_left = facing_left
     
-    
-func _unhandled_input(event):
-    if not AUTO_ATTACK and not event.is_echo():
-        handle_attack_input()
-    
 
 func handle_attack_input():
-    if HOLD_TO_ATTACK:
-        # can be held down instead of requiring individual clicks/presses
-        attacking = Input.is_action_pressed("primary_attack")
-    else:
-        attacking = Input.is_action_just_pressed("primary_attack")
+    if Input.is_action_just_pressed("primary_attack"):
+        attacking = true
+    elif Input.is_action_just_released("primary_attack"):
+        attacking = false
+        
     if attacking:
         attack()
 
@@ -359,9 +352,11 @@ func take_damage(damage_amount: int):
     
 func game_over():
     is_dead = true
+
     # disable attacking
     AUTO_ATTACK = false
     attacking = false
+    
     # disable enemy spawning
     var game_node = get_node("/root/Game")
     game_node.spawn_rate = 0
@@ -370,9 +365,6 @@ func game_over():
 # EFFECTS FROM UI
 func _on_auto_attack_toggle_toggled(toggled_on):
     AUTO_ATTACK = toggled_on
-
-func _on_hold_attack_toggle_toggled(toggled_on):
-    HOLD_TO_ATTACK = toggled_on
 
 
 func _on_hurt_flash_timer_timeout():
