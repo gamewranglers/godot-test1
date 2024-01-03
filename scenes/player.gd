@@ -153,10 +153,17 @@ func calculate_hit_damage(weapon_damage):
     return weapon_damage * strength_adjustment
 
 
-func show_damage_text(msg: String, color: Color = Color.WHITE):
+func show_damage_text(
+    msg: String, 
+    color: Color = Color.WHITE,
+    duration: float = 0.3,
+    size: float = 1.0,
+    persist: bool = false,
+):
     var popup = status_text_scene.instantiate()
+    popup.display_time_sec = duration
     get_parent().add_child(popup)
-    popup.start(msg, global_position, color)
+    popup.start(msg, global_position, color, size, persist)
     
 
 func add_experience(xp: int):
@@ -175,7 +182,7 @@ func add_experience(xp: int):
         
         
 func level_up():
-    show_damage_text("Level Up!", Color.AQUAMARINE)
+    show_damage_text("Level Up!", Color.AQUAMARINE, 1.5, 2.0)
     
     level += 1
     # also update level indicator
@@ -360,6 +367,8 @@ func game_over():
     # disable enemy spawning
     var game_node = get_node("/root/Game")
     game_node.spawn_rate = 0
+    
+    show_damage_text("DEATH", Color.DARK_RED, 1.5, 3.0, true)
 
 
 # EFFECTS FROM UI

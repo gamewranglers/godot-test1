@@ -12,6 +12,7 @@ func start(
     start_position: Vector2,
     color: Color = Color.WHITE,
     size: float = 1.0,
+    persist: bool = false,
     _status_kind: String = "damage",
 ):
     # set starting values
@@ -30,11 +31,13 @@ func start(
     )
     tween.tween_property(self, "position", end_position, display_time_sec).set_ease(Tween.EASE_OUT)
     
-    # fade opacity to zero
-    tween.tween_property(%Label, "modulate:a", 0, display_time_sec).set_ease(Tween.EASE_IN)
-    
+    if not persist:
+        # fade opacity to zero
+        tween.tween_property(%Label, "modulate:a", 0, display_time_sec).set_ease(Tween.EASE_IN)
+        
     # get smaller
     tween.tween_property(%Label, "scale", Vector2(1.0, 1.0), display_time_sec).set_ease(Tween.EASE_OUT)
     
     # self-destruct once it's done
-    tween.tween_callback(self.queue_free)  
+    if not persist:
+        tween.tween_callback(self.queue_free)  
