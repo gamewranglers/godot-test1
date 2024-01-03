@@ -5,11 +5,12 @@
 
 ### Changed
 - Death behavior:
-  - Player movement is disabled and the player sprite turns dark red
+  - Player movement is disabled, the player sprite turns dark red, and the mini healthbar disappears
   - Enemies wander around
 
 ### Removed
 - Attack button from the UI
+- "Hold to attack" toggle (always enabled by default)
 
 
 ## 2024-01-02
