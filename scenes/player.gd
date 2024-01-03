@@ -7,6 +7,7 @@ extends CharacterBody2D
 # player basics
 @onready var player_sprite = $Sprite2D
 
+@export var is_dead = false
 var level = 1
 var experience = 0
 var experience_to_next_level = 100
@@ -15,10 +16,10 @@ var experience_to_next_level = 100
 var health_points = 100
 var max_health_points = 100
 
-var strength = 5
-var dexterity = 5
+var strength = 5.0
+var dexterity = 5.0
 
-var armor = 1
+var armor = 1.0
 
 var movement_speed = 200.0
 
@@ -26,6 +27,7 @@ var movement_speed = 200.0
 var attacking = false
 var last_attack_time = 0
 var attack_cooldown_sec = 0.35
+@export var KNOCKBACK_MODIFIER = 1.0
 
 # pickup/drop weapon info
 var held_weapon = null
@@ -36,20 +38,28 @@ var facing_left = false
 @export var EQUIPMENT_OFFSET_X = 8
 @export var EQUIPMENT_OFFSET_Y = -5
 @export var EQUIPMENT_ROTATION = 15
+@export var HELD_ITEM_SCALE = 0.8
+@export var HELD_WEAPON_RANGE_SCALE = 1.0
 
 var status_text_scene = preload("res://scenes/status_text.tscn")
+
+
+func _process(_delta: float):
+    if AUTO_ATTACK:
+        attack()
 
 
 func _physics_process(delta: float):
     update_health_bars()
     
+    if is_dead:
+        player_sprite.modulate = Color.DARK_RED
+        return
+    
     handle_movement(delta)
     
     adjust_held_weapon()
     adjust_attack_range()
-
-    if AUTO_ATTACK:
-        attack()
 
     handle_enemy_damage()
 
@@ -65,10 +75,10 @@ func update_health_bars():
         %HealthBar.visible = false
 
     # in the UI
-    var ui_health_bar = get_node("/root/Game/UI/PlayerHealthBar")
+    var ui_health_bar = get_node("/root/Game/UI/HealthBar/PlayerHealthBar")
     ui_health_bar.value = health_points
     ui_health_bar.max_value = max_health_points
-    var ui_health_bar_values = get_node("/root/Game/UI/PlayerHealthValues")
+    var ui_health_bar_values = get_node("/root/Game/UI/HealthBar/PlayerHealthValues")
     ui_health_bar_values.text = "%s/%s" % [health_points, max_health_points]
     
             
@@ -127,13 +137,12 @@ func attack():
         var enemies_in_range = %AttackRange.get_overlapping_bodies()
         # TODO: determine whether player is attacking one enemy or multiple
         for enemy in enemies_in_range:
-            enemy.take_knockback(held_weapon.knockback())
+            enemy.take_knockback(held_weapon.knockback() * KNOCKBACK_MODIFIER)
             var hit_damage = calculate_hit_damage(held_weapon.damage)
             if hit_damage:
                 var experience_gained = enemy.take_damage(hit_damage)
                 add_experience(experience_gained)
-    else:
-        print("no weapon to attack with, and we haven't implemented punching yet!")
+
     last_attack_time = Time.get_ticks_msec()
 
 
@@ -141,12 +150,13 @@ func calculate_hit_damage(weapon_damage):
     # TODO: make this better if dexterity is going to increase on level_up
     var miss_chance = (100.0 - dexterity) / 100.0
     var chance_to_hit = randf()
-    print("miss_chance: %s, chance_to_hit: %s" % [miss_chance, chance_to_hit])
+    #print("miss_chance: %s, chance_to_hit: %s" % [miss_chance, chance_to_hit])
     if miss_chance < chance_to_hit:
         show_damage_text("Miss")
         return 0
         
-    var strength_adjustment = 1 + (strength / 100)
+    var strength_adjustment = 1.0 + (strength / 100.0)
+    #print("strength_adjustment: %s" % strength_adjustment)
     return weapon_damage * strength_adjustment
 
 
@@ -164,11 +174,54 @@ func add_experience(xp: int):
     if experience >= experience_to_next_level:
         level_up()
         
+    var ui_xp_bar = get_node("/root/Game/UI/XPBar/PlayerXPBar")
+    ui_xp_bar.value = experience
+    ui_xp_bar.max_value = experience_to_next_level
+    var ui_xp_bar_values = get_node("/root/Game/UI/XPBar/PlayerXPValues")
+    ui_xp_bar_values.text = "%s/%s" % [experience, experience_to_next_level]
+        
         
 func level_up():
+    show_damage_text("Level Up!", Color.AQUAMARINE)
+    
     level += 1
+    # also update level indicator
+    var ui_level_text = get_node("/root/Game/UI/PlayerLevelLabel")
+    ui_level_text.text = "LVL %s" % level
+    
+    # reset experience and increase amount to next level
     experience = 0
-    # TODO: increase stats and increase experience_to_next_level
+    experience_to_next_level = int(experience_to_next_level * 1.5)
+    
+    # replenish health
+    max_health_points += 5.0
+    health_points = max_health_points
+    
+    # stronger attacks!
+    strength += 5.0
+    # faster attacks!
+    attack_cooldown_sec *= 0.95
+    # longer range!
+    HELD_ITEM_SCALE += 0.25
+    # bigger weapon!
+    EQUIPMENT_OFFSET_X += 1
+    EQUIPMENT_OFFSET_X += 1
+    HELD_WEAPON_RANGE_SCALE += 0.05
+    # longer knockbacks!
+    KNOCKBACK_MODIFIER += 0.2
+    if held_weapon:
+        held_weapon.scale = Vector2(HELD_ITEM_SCALE, HELD_ITEM_SCALE)
+    
+    # spawn enemies faster
+    var enemy_spawner = get_node("/root/Game/EnemySpawner/EnemySpawnTimer")
+    enemy_spawner.wait_time *= 0.95
+    #print("enemy_spawner.wait_time: %s" % enemy_spawner.wait_time)
+    
+    # spawn more enemies
+    var game_node = get_node("/root/Game")
+    game_node.spawn_rate += 1
+    #print("game_node.spawn_rate: %s" % game_node.spawn_rate)
+
     
     
 func adjust_held_weapon():
@@ -183,7 +236,10 @@ func adjust_held_weapon():
 func adjust_attack_range():
     if held_weapon != null:
         # double size of attack range
-        %AttackRange.scale = Vector2(held_weapon.attack_range, held_weapon.attack_range)
+        %AttackRange.scale = Vector2(
+            held_weapon.attack_range * HELD_WEAPON_RANGE_SCALE,
+            held_weapon.attack_range * HELD_WEAPON_RANGE_SCALE,
+        )
     else:
         # reset the attack range size
         %AttackRange.scale = Vector2(1.0, 1.0)
@@ -200,7 +256,7 @@ func reparent_item_to_player(obj: Area2D):
     
     # reposition the weapon to the right of the player, scale it down slightly, and rotate it
     # to give off the illusion that the player is "holding" it
-    obj.scale = Vector2(0.75, 0.75)
+    obj.scale = Vector2(HELD_ITEM_SCALE, HELD_ITEM_SCALE)
     
     # NOTE: when attacking, movement will be relative to the weapon pivot point instead of the
     # weapon node's center position
@@ -286,6 +342,7 @@ func handle_enemy_damage():
             take_damage(damage_amount)
             enemy.last_attack_time = Time.get_ticks_msec()
 
+# ENEMY->PLAYER
 func take_damage(damage_amount: int):
     player_sprite.modulate = Color.RED
     %HurtFlashTimer.start()
@@ -293,30 +350,32 @@ func take_damage(damage_amount: int):
     show_damage_text(str(damage_amount), Color.RED)
     
     if health_points <= 0:
-        print("player died! ☠️")
-        # queue_free()
         # TODO: transition to some "game over" state
+        game_over()
         return
 
     health_points -= damage_amount
-    #print("%s took %s point(s) of damage (%s/%s)" % [self, damage_amount, health_points, max_health_points])
+    
+    
+func game_over():
+    is_dead = true
+    # disable attacking
+    AUTO_ATTACK = false
+    attacking = false
+    # disable enemy spawning
+    var game_node = get_node("/root/Game")
+    game_node.spawn_rate = 0
 
 
 # EFFECTS FROM UI
 func _on_auto_attack_toggle_toggled(toggled_on):
-    if AUTO_ATTACK != toggled_on:
-        print("turned auto_attack to %s" % toggled_on)
-        AUTO_ATTACK = toggled_on
+    AUTO_ATTACK = toggled_on
 
 func _on_hold_attack_toggle_toggled(toggled_on):
-    if HOLD_TO_ATTACK != toggled_on:
-        print("turned hold_to_attack to %s" % toggled_on)
-        HOLD_TO_ATTACK = toggled_on
+    HOLD_TO_ATTACK = toggled_on
 
 
-func _on_attack_button_pressed():
-    attack()
+func _on_hurt_flash_timer_timeout():
+    if not is_dead:
+        player_sprite.modulate = Color.WHITE
 
-
-func _on_hit_flash_timer_timeout():
-    player_sprite.modulate = Color.WHITE

@@ -9,7 +9,7 @@ var is_attacking = false
 # base properties
 var damage = 1
 var knockback_amount = 0
-var attack_range = 1
+var attack_range = 1.0
 
 # attack transform properties / movement per frame
 var attack_speed = 150

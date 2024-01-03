@@ -1,4 +1,4 @@
-[gd_scene load_steps=19 format=3 uid="uid://bpm8mfhifkm33"]
+[gd_scene load_steps=20 format=3 uid="uid://bpm8mfhifkm33"]
 
 [ext_resource type="Texture2D" uid="uid://by1m0jqibh1a6" path="res://tiles/dungeon/tile_0048.png" id="1_5iarv"]
 [ext_resource type="PackedScene" uid="uid://78vs58r8uvs2" path="res://scenes/player.tscn" id="1_34rbn"]
@@ -7,6 +7,8 @@
 [ext_resource type="Texture2D" uid="uid://cdx2nf82bngq3" path="res://tiles/town/tile_0000.png" id="2_egmgy"]
 [ext_resource type="Texture2D" uid="uid://bliq8fuphy7a4" path="res://tilemaps/tilemap1.png" id="3_c0tva"]
 [ext_resource type="Texture2D" uid="uid://lvrdnh614yyv" path="res://tilemaps/tilemap3.png" id="4_orhag"]
+[ext_resource type="PackedScene" uid="uid://dyxer7r2724j3" path="res://scenes/health_bar.tscn" id="7_y2pws"]
+[ext_resource type="PackedScene" uid="uid://2aqppptqfs6v" path="res://scenes/xp_bar.tscn" id="8_md8r7"]
 [ext_resource type="PackedScene" uid="uid://bcqxsiytj1ft6" path="res://scenes/axe.tscn" id="9_olyx0"]
 [ext_resource type="PackedScene" uid="uid://c5253rxvlqjqr" path="res://scenes/sword.tscn" id="10_j8uo3"]
 [ext_resource type="Script" path="res://scenes/axe.gd" id="10_klnbc"]
@@ -1537,9 +1539,6 @@ font_size = 8
 outline_color = Color(0, 0, 0, 1)
 shadow_size = 0
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_sy21b"]
-bg_color = Color(1, 0, 0, 1)
-
 [sub_resource type="Curve2D" id="Curve2D_2f2ed"]
 _data = {
 "points": PackedVector2Array(0, 0, 0, 0, 164, 83, 0, 0, 0, 0, 756, 61, 0, 0, 0, 0, 1150, 305, 0, 0, 0, 0, 1010, 655, 0, 0, 0, 0, 688, 401, 0, 0, 0, 0, 710, 215, 0, 0, 0, 0, 460, 181, 0, 0, 0, 0, 164, 83)
@@ -1548,7 +1547,8 @@ point_count = 8
 
 [node name="Game" type="Node"]
 script = ExtResource("1_bhadk")
-metadata/_edit_horizontal_guides_ = [649.0]
+metadata/_edit_horizontal_guides_ = [649.0, 643.0, 666.0]
+metadata/_edit_vertical_guides_ = [705.0, 640.0, 687.0, 593.0]
 
 [node name="Dirt1" type="TextureRect" parent="."]
 texture_filter = 1
@@ -1632,111 +1632,50 @@ grow_vertical = 0
 theme_override_font_sizes/font_size = 10
 text = "hold to attack"
 
-[node name="AttackButton" type="Button" parent="UI"]
-unique_name_in_owner = true
+[node name="PlayerLevelLabel" type="Label" parent="UI"]
 texture_filter = 1
 anchors_preset = 7
 anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
-offset_left = -47.0
-offset_top = -38.0
-offset_right = 47.0
-offset_bottom = -7.0
-grow_horizontal = 2
-grow_vertical = 0
-theme_override_font_sizes/font_size = 10
-action_mode = 0
-text = "ATTACK ⚔️"
-
-[node name="DodgeButton" type="Button" parent="UI"]
-visible = false
-texture_filter = 1
-anchors_preset = 7
-anchor_left = 0.5
-anchor_top = 1.0
-anchor_right = 0.5
-anchor_bottom = 1.0
-offset_left = 62.0
-offset_top = -31.0
-offset_right = 156.0
-grow_horizontal = 2
-grow_vertical = 0
-theme_override_font_sizes/font_size = 10
-disabled = true
-text = "DODGE ⏩"
-
-[node name="PlayerHealthLabel" type="Label" parent="UI"]
-texture_filter = 1
-anchors_preset = 7
-anchor_left = 0.5
-anchor_top = 1.0
-anchor_right = 0.5
-anchor_bottom = 1.0
-offset_left = -285.0
-offset_top = -77.0
-offset_right = -245.0
-offset_bottom = -54.0
+offset_left = 64.0
+offset_top = -43.0
+offset_right = 104.0
+offset_bottom = -20.0
 grow_horizontal = 2
 grow_vertical = 0
 size_flags_vertical = 8
-text = "HP"
+theme_override_colors/font_color = Color(0.807843, 0.639216, 0, 1)
+text = "LVL 1"
 
-[node name="PlayerHealthBar" type="ProgressBar" parent="UI"]
-unique_name_in_owner = true
+[node name="HealthBar" parent="UI" instance=ExtResource("7_y2pws")]
 anchors_preset = 7
 anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
-offset_left = -259.0
-offset_top = -77.0
-offset_right = -20.0
-offset_bottom = -54.0
+offset_left = -313.0
+offset_top = -89.0
+offset_right = -273.0
+offset_bottom = -49.0
 grow_horizontal = 2
 grow_vertical = 0
-theme_override_font_sizes/font_size = 8
-theme_override_styles/fill = SubResource("StyleBoxFlat_sy21b")
-show_percentage = false
+size_flags_horizontal = 4
+size_flags_vertical = 4
 
-[node name="PlayerHealthValues" type="Label" parent="UI"]
-unique_name_in_owner = true
-texture_filter = 1
+[node name="XPBar" parent="UI" instance=ExtResource("8_md8r7")]
 anchors_preset = 7
 anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
-offset_left = -159.0
-offset_top = -77.0
-offset_right = -119.0
-offset_bottom = -54.0
+offset_left = -5.0
+offset_top = -88.0
+offset_right = 35.0
+offset_bottom = -48.0
 grow_horizontal = 2
 grow_vertical = 0
-size_flags_vertical = 8
-theme_override_font_sizes/font_size = 8
-text = "0/0"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="PlayerXPLabel" type="Label" parent="UI"]
-visible = false
-texture_filter = 1
-anchors_preset = 7
-anchor_left = 0.5
-anchor_top = 1.0
-anchor_right = 0.5
-anchor_bottom = 1.0
-offset_left = 47.0
-offset_top = -77.0
-offset_right = 87.0
-offset_bottom = -54.0
-grow_horizontal = 2
-grow_vertical = 0
-size_flags_vertical = 8
-text = "EXP
-"
 
 [node name="Player" parent="." instance=ExtResource("1_34rbn")]
 unique_name_in_owner = true
@@ -1769,5 +1708,4 @@ rotation = -0.0371451
 [connection signal="toggled" from="UI/AutoAttackToggle" to="." method="_on_auto_attack_toggle_toggled"]
 [connection signal="toggled" from="UI/AutoAttackToggle" to="Player" method="_on_auto_attack_toggle_toggled"]
 [connection signal="toggled" from="UI/HoldAttackToggle" to="Player" method="_on_hold_attack_toggle_toggled"]
-[connection signal="pressed" from="UI/AttackButton" to="Player" method="_on_attack_button_pressed"]
 [connection signal="timeout" from="EnemySpawner/EnemySpawnTimer" to="." method="_on_enemy_spawn_timer_timeout"]
