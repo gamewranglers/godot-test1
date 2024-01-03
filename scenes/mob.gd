@@ -22,7 +22,8 @@ var kill_experience = 5
 
 var facing_left = false
 
-@onready var player = get_node("/root/Game/Player")
+var WANDER_X = 0.0
+var WANDER_Y = 0.0
 
 
 func _ready():
@@ -32,7 +33,16 @@ func _ready():
 func _physics_process(delta):
     update_health_bars()
     
-    var direction = global_position.direction_to(player.global_position)
+    var direction = Vector2(0, 0)
+    
+    var player = get_node("/root/Game/Player")
+    if not player.is_dead:
+        # head to the player
+        direction = global_position.direction_to(player.global_position)
+    else:
+        # wander around
+        var wander_pos = Vector2(WANDER_X, WANDER_Y)
+        direction = global_position.direction_to(wander_pos)
     
     # flip the sprite if the player is to the left of the mob instance
     if direction.x < 0:
@@ -99,3 +109,13 @@ func take_damage(amount: int):
 
 func _on_hit_flash_timer_timeout():
     mob_sprite.modulate = Color.WHITE
+
+
+func _on_wander_timer_timeout():
+    var player = get_node("/root/Game/Player")
+    if player.is_dead:
+        WANDER_X = randi_range(-500, 1600)
+        WANDER_Y = randi_range(-500, 1600)
+        # adjust how long until next wander position change
+        %WanderTimer.wait_time = randf_range(0.2, 5.0)
+        MOB_SPEED = randf_range(0.0, 65.0)
