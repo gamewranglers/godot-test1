@@ -1,4 +1,18 @@
-## 2024-01-01
+## 2024-01-03
+### Added
+- XP bar and level indicator
+- On level up, attacks get faster, stronger, and larger (area-wise) while enemies spawn faster
+
+### Changed
+- Death behavior:
+  - Player movement is disabled and the player sprite turns dark red
+  - Enemies wander around
+
+### Removed
+- Attack button from the UI
+
+
+## 2024-01-02
 ### Added
 - Enemy knockback during player attacks
 - Enemy and player hurt flashes
